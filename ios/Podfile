@@ -25,7 +25,7 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'TempApp' do
+target 'NewsApp' do
   config = use_native_modules!
 
   # Flags change depending on the env values.
@@ -45,7 +45,7 @@ target 'TempApp' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  target 'TempAppTests' do
+  target 'NewsAppTests' do
     inherit! :complete
     # Pods for testing
   end
@@ -60,3 +60,4 @@ target 'TempApp' do
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end
+

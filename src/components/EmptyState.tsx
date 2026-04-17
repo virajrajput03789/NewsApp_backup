@@ -8,6 +8,7 @@ interface EmptyStateProps {
 const EmptyState: React.FC<EmptyStateProps> = ({ message }) => {
   return (
     <View style={styles.container}>
+      <Text style={styles.icon}>📭</Text>
       <Text style={styles.message}>{message}</Text>
     </View>
   );
@@ -18,12 +19,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    paddingVertical: 100,
+    paddingHorizontal: 40,
+  },
+  icon: {
+    fontSize: 64,
+    marginBottom: 16,
   },
   message: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: 18,
+    color: '#888',
     textAlign: 'center',
+    fontWeight: '500',
+    lineHeight: 24,
   },
 });
 

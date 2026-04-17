@@ -1,34 +1,33 @@
 import { Article } from '../types/article';
-import { BASE_URL, PAGE_SIZE } from '../utils/constants';
+import { BASE_URL, PAGE_SIZE, API_KEY } from '../utils/constants';
 
 export const fetchTopHeadlines = async (page: number, query: string = ''): Promise<Article[]> => {
+  if (!API_KEY) {
+    throw new Error('API_KEY is missing. Please add your key in src/utils/constants.ts or configure .env');
+  }
   try {
     const params = new URLSearchParams({
-      _page: page.toString(),
-      _limit: PAGE_SIZE.toString(),
+      page: page.toString(),
+      pageSize: PAGE_SIZE.toString(),
+      apiKey: API_KEY,
     });
     
+    let endpoint = '/top-headlines';
     if (query) {
+      endpoint = '/everything';
       params.append('q', query);
+    } else {
+      params.append('country', 'us');
     }
 
-    const response = await fetch(`${BASE_URL}/posts?${params.toString()}`);
+    const response = await fetch(`${BASE_URL}${endpoint}?${params.toString()}`);
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error('Failed to fetch news');
+      throw new Error(data.message || 'Failed to fetch news');
     }
 
-    return data.map((post: any) => ({
-      source: { id: 'fallback', name: 'JSONPlaceholder' },
-      author: 'Fallback Author',
-      title: post.title,
-      description: post.body,
-      url: `https://jsonplaceholder.typicode.com/posts/${post.id}`,
-      urlToImage: null,
-      publishedAt: new Date().toISOString(),
-      content: post.body,
-    }));
+    return data.articles || [];
   } catch (error) {
     console.error('News API Error:', error);
     throw error;

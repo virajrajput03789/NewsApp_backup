@@ -70,9 +70,7 @@ const articlesSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchArticlesThunk.pending, (state, action) => {
-        if (action.meta.arg.page === 1 && !action.meta.arg.isRefresh) {
-            state.status = 'loading';
-        }
+        state.status = 'loading';
       })
       .addCase(fetchArticlesThunk.fulfilled, (state, action) => {
         state.status = 'succeeded';
@@ -80,8 +78,8 @@ const articlesSlice = createSlice({
         state.lastFetched = Date.now();
         state.page = action.payload.page;
         
-        const newArticles = action.payload.articles.filter(
-            (article) => article.url !== 'https://removed.com'
+        const newArticles = (action.payload.articles || []).filter(
+            (article) => article && article.url !== 'https://removed.com'
         );
 
         if (action.payload.page === 1) {
@@ -99,7 +97,7 @@ const articlesSlice = createSlice({
         state.error = action.payload as string || 'An error occurred';
       })
       .addCase(loadCachedArticlesThunk.fulfilled, (state, action) => {
-          if (state.items.length === 0 && action.payload.length > 0) {
+          if (state.items.length === 0 && action.payload && action.payload.length > 0) {
               state.items = action.payload;
               state.status = 'succeeded';
           }

@@ -15,10 +15,12 @@ export const selectArticlesStatus = createSelector(
   (articles) => articles.status
 );
 
-export const selectAllBookmarks = createSelector(
+export const selectBookmarks = createSelector(
   [selectBookmarksState],
   (bookmarks) => bookmarks.items
 );
+
+export const selectAllBookmarks = selectBookmarks; // Alias for safety
 
 export const selectSearchQuery = createSelector(
   [selectSearchState],

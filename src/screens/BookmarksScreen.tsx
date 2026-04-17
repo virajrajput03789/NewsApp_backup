@@ -1,36 +1,29 @@
 import React, { useCallback } from 'react';
-import { FlatList, StyleSheet, ListRenderItemInfo, SafeAreaView } from 'react-native';
+import { View, FlatList, StyleSheet, ListRenderItemInfo } from 'react-native';
 import { useSelector } from 'react-redux';
-import { selectAllBookmarks } from '../store/selectors';
+import { selectBookmarks } from '../store/selectors';
 import ArticleCard from '../components/ArticleCard';
 import EmptyState from '../components/EmptyState';
 import { Article } from '../types/article';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { TabParamList, HomeStackParamList } from '../types/navigation';
-import { CompositeScreenProps } from '@react-navigation/native';
+import { TabParamList } from '../types/navigation';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import { store } from '../store';
 
-type Props = CompositeScreenProps<
-  BottomTabScreenProps<TabParamList, 'BookmarksTab'>,
-  NativeStackScreenProps<HomeStackParamList>
->;
-
-const ITEM_HEIGHT = 120;
+type Props = BottomTabScreenProps<TabParamList, 'BookmarksTab'>;
 
 const BookmarksScreen: React.FC<Props> = ({ navigation }) => {
-  const bookmarks = useSelector(selectAllBookmarks);
+  const bookmarks = useSelector(selectBookmarks);
 
   const handlePressArticle = useCallback((url: string) => {
-    const state = store.getState();
-    const article = state.bookmarks.items.find(a => a.url === url);
+    const article = bookmarks.find(a => a.url === url);
     if (article) {
+      // @ts-ignore - Detail exists in HomeStack but we're in a different tab
+      // However, navigation.navigate works across tabs if the name is global
       navigation.navigate('HomeTab', {
         screen: 'Detail',
-        params: { article },
+        params: { article }
       });
     }
-  }, [navigation]);
+  }, [bookmarks, navigation]);
 
   const renderItem = useCallback(({ item }: ListRenderItemInfo<Article>) => {
     return (
@@ -45,34 +38,27 @@ const BookmarksScreen: React.FC<Props> = ({ navigation }) => {
     );
   }, [handlePressArticle]);
 
-  const keyExtractor = useCallback((item: Article) => `bookmark-${item.url}`, []);
-
-  const getItemLayout = useCallback((_: any, index: number) => ({
-    length: ITEM_HEIGHT,
-    offset: ITEM_HEIGHT * index,
-    index,
-  }), []);
-
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <FlatList
         data={bookmarks}
         renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={10}
-        windowSize={5}
-        ListEmptyComponent={<EmptyState message="No bookmarked articles yet." />}
+        keyExtractor={(item) => item.url}
+        contentContainerStyle={styles.listContent}
+        ListEmptyComponent={<EmptyState message="You haven't saved any articles yet." />}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f8f9fa',
+  },
+  listContent: {
+    flexGrow: 1,
+    paddingVertical: 8,
   },
 });
 
