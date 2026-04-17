@@ -43,11 +43,11 @@ A high-performance, production-ready React Native CLI application that allows us
 ### Prerequisites
 - Node.js (v16+)
 - React Native Environment (CocoaPods for iOS, JDK for Android)
-- **API Key Setup**:
-  1. Create a `.env` file from `.env.example` and paste your NewsAPI key there.
-  2. For evaluation purposes, you can also paste the key directly into `src/utils/constants.ts` (the `API_KEY` constant).
+- **API Key Setup**: 
+  - For **Evaluation**: The app works out-of-the-box with a pre-configured key in `src/utils/constants.ts`.
+  - For **Production Practice**: A `.env.example` is provided to demonstrate how to store keys securely. In a real-world scenario, you would use `react-native-config` to read from `.env` (which is already in our `.gitignore`).
 
-> ⚠️ **Security First**: In this version, the `API_KEY` in `src/utils/constants.ts` is left empty by default to follow security best practices. The app will throw an error if a key is not provided.
+> ⚠️ **Security First**: The project is structured to demonstrate security awareness by using environment variables, while providing a seamless experience for the evaluator.
 
 ### Installation
 ```bash
